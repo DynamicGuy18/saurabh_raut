@@ -1,0 +1,21 @@
+.container {
+  width: 200px;
+  height: 300px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  float: left;
+}
+
+.item {
+  width: 80px;
+  height: 80px;
+  background-color: #f1f1f1;
+  margin-bottom: 5px;
+  cursor: move;
+}
+
+.success-message {
+  color: green;
+  font-weight: bold;
+  display: none;
+}
