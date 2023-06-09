@@ -1,52 +1,69 @@
-// Function to handle the drag start event
-function dragStart(event) {
-  event.dataTransfer.setData("text/plain", event.target.id);
-  event.currentTarget.style.opacity = "0.5";
+// Get the containers and items
+const container1 = document.getElementById('container1');
+const container2 = document.getElementById('container2');
+const items = document.querySelectorAll('.item');
+
+// Add event listeners for drag and drop events
+items.forEach(item => {
+  item.addEventListener('dragstart', dragStart);
+  item.addEventListener('dragend', dragEnd);
+  item.setAttribute('draggable', 'true'); // Set draggable attribute to true
+});
+
+container2.addEventListener('dragover', dragOver);
+container2.addEventListener('dragenter', dragEnter);
+container2.addEventListener('dragleave', dragLeave);
+container2.addEventListener('drop', drop);
+
+// Drag and drop event handlers
+function dragStart(e) {
+  e.dataTransfer.setData('text/plain', e.target.id);
+  e.target.classList.add('dragged');
 }
 
-// Function to handle the drag end event
-function dragEnd(event) {
-  event.currentTarget.style.opacity = "1";
+function dragEnd(e) {
+  e.target.classList.remove('dragged');
 }
 
-// Function to handle the drop event
-function drop(event) {
-  event.preventDefault();
-  var data = event.dataTransfer.getData("text/plain");
-  var item = document.getElementById(data);
-  event.target.appendChild(item);
-  
-  // Display success message
-  var successMessage = document.getElementById("successMessage");
-  successMessage.style.display = "block";
-  setTimeout(function() {
-    successMessage.style.display = "none";
-  }, 2000);
+function dragOver(e) {
+  e.preventDefault();
 }
 
-// Function to handle the drag over event
-function allowDrop(event) {
-  event.preventDefault();
+function dragEnter(e) {
+  e.preventDefault();
+  container2.classList.add('drag-enter');
 }
 
-// Function to reset the containers
+function dragLeave() {
+  container2.classList.remove('drag-enter');
+}
+
+function drop(e) {
+  e.preventDefault();
+  const itemId = e.dataTransfer.getData('text/plain');
+  const item = document.getElementById(itemId);
+  container2.appendChild(item);
+  container2.classList.remove('drag-enter');
+  showSuccessMessage('Item dropped successfully!');
+}
+
+// Reset button event listener
+const resetButton = document.getElementById('resetButton');
+resetButton.addEventListener('click', reset);
+
+// Reset function
 function reset() {
-  var container1 = document.getElementById("container1");
-  var container2 = document.getElementById("container2");
-  container1.innerHTML = '<div class="item" draggable="true">Item 1</div><div class="item" draggable="true">Item 2</div><div class="item" draggable="true">Item 3</div>';
   container2.innerHTML = '';
+  container1.append(...items);
 }
 
-// Add event listeners to the items
-var items = document.getElementsByClassName("item");
-for (var i = 0; i < items.length; i++) {
-  items[i].addEventListener("dragstart", dragStart);
-  items[i].addEventListener("dragend", dragEnd);
-}
-
-// Add event listeners to the containers
-var containers = document.getElementsByClassName("container");
-for (var j = 0; j < containers.length; j++) {
-  containers[j].addEventListener("drop", drop);
-  containers[j].addEventListener("dragover", allowDrop);
+// Show success message function
+function showSuccessMessage(message) {
+  const successMessage = document.createElement('p');
+  successMessage.textContent = message;
+  successMessage.classList.add('success-message');
+  container2.insertAdjacentElement('afterend', successMessage);
+  setTimeout(() => {
+    successMessage.remove();
+  }, 2000);
 }
